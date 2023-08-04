@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Adicionar Dados ao Firestore</h1>
+    <form id="meuFormulario">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="idade">Idade:</label>
+        <input type="number" id="idade" name="idade" required>
+        <button type="submit">Salvar</button>
+    </form>
+
+    <h1>Lista de Usuários</h1>
+    <ul id="listaUsuarios"></ul>
+
+    <!-- Adicione a biblioteca do Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-firestore.js"></script>
+
+    <script>
+        // Configurar as credenciais do Firebase
+        var firebaseConfig = {
+            apiKey: "AIzaSyCwrBfWqcM8QpHBdQQCPGTFXxeVMfKEaN0",
+            authDomain: "portugal-9ac69.firebaseapp.com",
+            projectId: "portugal-9ac69",
+        };
+        // Inicializar o Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Referenciar o Firestore
+        var db = firebase.firestore();
+
+        // Referenciar a lista no HTML
+        var listaUsuarios = document.getElementById("listaUsuarios");
+
+        // Função para exibir os usuários na lista
+        function exibirUsuarios(usuarios) {
+            listaUsuarios.innerHTML = ""; // Limpar a lista antes de atualizar
+
+            usuarios.forEach(function (usuario) {
+                var li = document.createElement("li");
+                li.textContent = "Nome: " + usuario.nome + ", Idade: " + usuario.idade;
+                listaUsuarios.appendChild(li);
+            });
+        }
+
+        // Consultar a coleção "usuarios" e exibir os dados
+        db.collection("usuarios").get()
+            .then(function (querySnapshot) {
+                var usuarios = [];
+                querySnapshot.forEach(function (doc) {
+                    usuarios.push(doc.data());
+                });
+                exibirUsuarios(usuarios);
+            })
+            .catch(function (error) {
+                console.error("Erro ao obter dados: ", error);
+            });
+
+        // Listar os dados da coleção "usuarios"
+        var listaUsuarios = document.getElementById("listaUsuarios");
+        db.collection("usuarios").get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                var li = document.createElement("li");
+                li.textContent = "Nome: " + doc.data().nome + ", Idade: " + doc.data().idade;
+                listaUsuarios.appendChild(li);
+            });
+        }).catch((error) => {
+            console.error("Erro ao obter dados: ", error);
+        });
+    </script>
+</body>
+
+</html>
